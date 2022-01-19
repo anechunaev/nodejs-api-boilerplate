@@ -1,0 +1,363 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Node.js API example",
+		"version": "1.0.0",
+		"description": "Node.js API example",
+		"contact": {
+			"name": "Artem Nechunaev",
+			"email": "artem@nechunaev.com"
+		},
+		"license": {
+			"name": "MIT",
+			"url": "https://opensource.org/licenses/MIT"
+		}
+	},
+	"servers": [
+		{
+			"url": "http://localhost:8080/api",
+			"description": "Main entry point"
+		}
+	],
+	"paths": {
+		"/v1/creatures": {
+			"get": {
+				"parameters": [
+					{
+						"name": "offset",
+						"description": "Sets the ID of a creature for a start of the list. By default is `0`.",
+						"schema": {
+							"default": 0,
+							"type": "integer"
+						},
+						"in": "query",
+						"required": false
+					},
+					{
+						"name": "limit",
+						"description": "Sets the length of the list. By default is `100`.",
+						"schema": {
+							"default": 100,
+							"type": "integer"
+						},
+						"in": "query",
+						"required": false
+					}
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CreatureList_v1"
+								},
+								"example": [
+									{
+										"id": 0,
+										"kind": "Human",
+										"name": "Artem",
+										"greeting": "Well, hello there!"
+									},
+									{
+										"id": 1,
+										"kind": "Dog",
+										"name": "Clifford",
+										"greeting": "Woof!"
+									}
+								]
+							}
+						},
+						"description": "Creatures data",
+						"headers": {},
+						"links": {}
+					}
+				},
+				"operationId": "getCreatures_v1",
+				"summary": "Returns information about all living creatures",
+				"description": ""
+			},
+			"post": {
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Creature_v1",
+								"required": [
+									"kind",
+									"name",
+									"greeting"
+								]
+							},
+							"example": {
+								"kind": "Human",
+								"name": "Artem",
+								"greeting": "Well, hello there!"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CreatureList_v1"
+								},
+								"example": {
+									"id": 1,
+									"kind": "Dog",
+									"name": "Clifford",
+									"greeting": "Woof!"
+								}
+							}
+						},
+						"description": "Creatures data",
+						"headers": {},
+						"links": {}
+					},
+					"500": {
+						"description": "Could not create creature",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Error_v1"
+								}
+							}
+						}
+					}
+				},
+				"operationId": "addCreature_v1",
+				"summary": "Creates new creature",
+				"description": ""
+			}
+		},
+		"/v1/creatures/{id}": {
+			"get": {
+				"parameters": [
+					{
+						"name": "id",
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Creature_v1"
+								},
+								"example": {
+									"id": 0,
+									"greeting": "Hello world!"
+								}
+							}
+						},
+						"description": "Creature info",
+						"headers": {},
+						"links": {}
+					},
+					"404": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Error_v1"
+								}
+							}
+						},
+						"description": "Creature was not found",
+						"headers": {},
+						"links": {}
+					}
+				},
+				"operationId": "getCreature_v1",
+				"summary": "Returns information about specific living creature",
+				"description": "",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Creature_v1"
+							},
+							"example": {
+								"greeting": "Hello world!"
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"parameters": [
+					{
+						"name": "id",
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Creature_v1"
+								}
+							}
+						},
+						"description": "Creature info",
+						"headers": {},
+						"links": {}
+					},
+					"500": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Error_v1"
+								}
+							}
+						},
+						"description": "Cannot add creature"
+					}
+				},
+				"operationId": "updateCreature_v1",
+				"summary": "Updates specific creature info",
+				"description": "",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Creature_v1"
+							},
+							"example": {
+								"greeting": "Hello world!"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"Error_v1": {
+				"required": [
+					"error",
+					"message"
+				],
+				"type": "object",
+				"properties": {
+					"error": {
+						"required": [
+							"code",
+							"httpStatus",
+							"name"
+						],
+						"type": "object",
+						"properties": {
+							"code": {
+								"description": "Error code",
+								"type": "string",
+								"example": "ENOTFOUND"
+							},
+							"httpStatus": {
+								"description": "HTTP response status code",
+								"type": "integer",
+								"example": 404
+							},
+							"name": {
+								"description": "Error name",
+								"type": "string",
+								"example": "NotFoundError"
+							}
+						}
+					},
+					"message": {
+						"description": "Description of the error",
+						"type": "string",
+						"example": "Specific creature was not found"
+					}
+				}
+			},
+			"CreatureList_v1": {
+				"type": "array",
+				"items": {
+					"anyOf": [
+						{
+							"$ref": "#/components/schemas/Error_v1"
+						},
+						{
+							"$ref": "#/components/schemas/Creature_v1"
+						}
+					]
+				}
+			},
+			"Creature_v1": {
+				"required": [
+					"id",
+					"kind",
+					"name",
+					"greeting"
+				],
+				"type": "object",
+				"properties": {
+					"id": {
+						"description": "Unique identificator of a specific creature",
+						"type": "integer",
+						"example": 0
+					},
+					"kind": {
+						"description": "Kind of a living creature",
+						"type": "string",
+						"example": "Human"
+					},
+					"name": {
+						"description": "Name of a living creature",
+						"type": "string",
+						"example": "Artem"
+					},
+					"greeting": {
+						"description": "What the creature says when you meet it",
+						"type": "string",
+						"example": "Well, hello there!"
+					}
+				}
+			}
+		},
+		"securitySchemes": {},
+		"headers": {},
+		"responses": {},
+		"parameters": {
+			"id": {
+				"in": "path",
+				"name": "id",
+				"example": "GET /api/v1/creatures/0",
+				"description": "Identifier of a specific creature.",
+				"schema": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"required": true,
+				"deprecated": false
+			}
+		}
+	},
+	"externalDocs": {
+		"description": "Auto generated docs in human readable format",
+		"url": "http://localhost:8080/docs"
+	},
+	"tags": [
+		{
+			"name": "example",
+			"description": "example"
+		},
+		{
+			"name": "creatures",
+			"description": "creatures"
+		},
+		{
+			"name": "REST",
+			"description": "REST"
+		}
+	],
+	"security": []
+}

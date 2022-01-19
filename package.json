@@ -1,0 +1,45 @@
+{
+  "name": "nodejs-api-boilerplate",
+  "version": "1.0.0",
+  "description": "Node.js API Boilerplate",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "url": "https://github.com/bungu/nodejs-api-boilerplate"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/webpack --mode=production --config=config/webpack/server.prod.js",
+    "dev:build": "./node_modules/.bin/webpack --mode=development --config=config/webpack/server.dev.js",
+    "docker:build": "docker build . -t bungubot/nodejs-api-boilerplate",
+    "docker:run": "docker run --name nodejs-api-boilerplate --rm -p 8080:8080 -it bungubot/nodejs-api-boilerplate",
+    "docgen": "rm -rf docs && npm run docgen:html && npm run docgen:md",
+    "docgen:html": "openapi-generator-cli generate -i ./openapi.json -o docs/html -g html -p=generateAliasAsModel=true --global-property skipFormModel=false",
+    "docgen:md": "openapi-generator-cli generate -i ./openapi.json -o docs/md -g markdown -p=generateAliasAsModel=true --global-property skipFormModel=false",
+    "start": "node --icu-data-dir=node_modules/full-icu dist/server.js"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.25",
+    "@types/express": "^4.17.13",
+    "@types/morgan": "^1.9.3",
+    "fork-ts-checker-webpack-plugin": "^6.5.0",
+    "morgan": "^1.10.0",
+    "terser-webpack-plugin": "^5.3.0",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.4",
+    "webpack": "^5.66.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-manifest-plugin": "^4.1.1"
+  },
+  "dependencies": {
+    "express": "^4.17.2",
+    "express-static-gzip": "^2.1.1",
+    "full-icu": "^1.4.0"
+  },
+  "main": "dist/server.js",
+  "directories": {
+    "src": "src"
+  },
+  "author": "Artem Nechunaev <artem@nechunaev.com>",
+  "sideEffects": false
+}

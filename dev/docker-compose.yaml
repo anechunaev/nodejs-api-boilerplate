@@ -1,0 +1,47 @@
+version: '3'
+services:
+    rest-api:
+        build:
+            context: ../
+            dockerfile: Dockerfile
+        container_name: rest-api
+        depends_on:
+          - db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - '8080:8080'
+        environment:
+            SERVICE_NAME: rest-api
+            NODE_ENV: development
+            DB_USER: anonymous
+            DB_ACCESS_TOKEN: 1234567890
+            DB_HOST: db:27017
+        networks:
+            - app-network
+        volumes:
+            - ../dist:/usr/share/app/dist
+            - ../node_modules:/usr/share/app/node_modules
+
+    db:
+        image: mongo:5.0.5
+        container_name: database
+        restart: always
+        tty: true
+        ports:
+            - '27017:27017'
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: anonymous
+          MONGO_INITDB_ROOT_PASSWORD: 1234567890
+        networks:
+            - app-network
+        volumes:
+            - dbdata:/var/lib/mongodb
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    dbdata:
+        driver: local

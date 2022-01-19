@@ -1,0 +1,7 @@
+.openapi-generator-ignore
+Apis/DefaultApi.md
+Models/CreatureList_v1.md
+Models/Creature_v1.md
+Models/Error_v1.md
+Models/Error_v1_error.md
+README.md
